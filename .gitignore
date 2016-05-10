@@ -58,5 +58,8 @@ docs/_build/
 # PyBuilder
 target/
 
+# raw data files
+*.html
+
 #Ipython Notebook
 .ipynb_checkpoints
