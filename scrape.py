@@ -1,9 +1,11 @@
 # Script for scraping the comments data off of the public comment site
-# v0.2
+# v1.0
 
 from bs4 import BeautifulSoup as bs
 import urllib2
 import time
+import datetime
+import pandas as pd
 
 #number of pages of comments
 pages = 214
@@ -34,12 +36,57 @@ for i in range(1, pages+1):
 print 'Completed 100%'
 
 #merge all the webpages into one single giant string
-together = '\n'.join(data)
+raw = '\n'.join(data)
 
 print 'Saving the raw html...'
 with open('raw.html', 'w') as fi:
-    fi.write(together)
+    fi.write(raw)
     
-print 'Done saving!'
+print 'Parsing the comments...'
+soup = bs(raw, 'html.parser')
 
-#TODO: parse the html
+#select the comments out of the html
+comments = soup.findAll("li", { "class" : "comment" })
+
+#dictionary for our parsed data
+parsed = {}
+
+for c in comments:
+    tmp = {}
+    #select the comment ID
+    cid = c.find('article').get('id')
+    
+    #try to get the author name. Use empty string if they have no name.
+    try:
+        tmp['author'] = c.find('p', {'class': 'comment-author-name'}).string
+    except(AttributeError):
+        tmp['author'] = ''
+        
+    #try to get their occupation. Use empty string if it's missing.
+    try:
+        tmp['occupation'] = c.find('strong').string
+    except(AttributeError):
+        tmp['occupation'] = ''
+    
+    #grab the timestamp on the comment
+    time = c.find('time').get('datetime')
+    #convert the timestamp to an actual python datetime object
+    tmp['time'] = datetime.datetime.strptime(time, '%Y-%m-%dT%H:%M:%S+00:00')
+    
+    #grab the body text of the comment
+    tmp['text'] = c.find('section', {'itemprop': 'commentText'}).get_text()
+    
+    #add this user's comment information to our dictionary of all comments
+    parsed[cid] = tmp
+    
+#convert the parsed dictionary into a clean dataframe :)
+df = pd.DataFrame.from_dict(parsed, orient='index')
+#reorder the columns
+df = df[['time', 'author', 'occupation', 'text']]
+#sort comments by the date, starting with the first comments
+df = df.sort_values(by='time')
+
+print 'Saving parsed comment data...'
+df.to_csv('parsed.tsv', sep='\t', encoding='utf-8')
+
+print 'Done!'
