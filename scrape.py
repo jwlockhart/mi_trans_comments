@@ -1,5 +1,5 @@
 # Script for scraping the comments data off of the public comment site
-# v1.0
+# v1.1
 
 from bs4 import BeautifulSoup as bs
 import urllib2
@@ -8,7 +8,7 @@ import datetime
 import pandas as pd
 
 #number of pages of comments
-pages = 214
+pages = 221
 
 #the base url for all pages of comments
 url = 'http://everyvoicecountsmi.org/136/public-comment-on-the-state-board-of-education-draft-statement-and-guidance-on-safe-and-supportive-learning-environments-for-lesbian-gay-bisexual-transgender-and-questioning-lgbtq-students/comment-page-'
@@ -85,6 +85,21 @@ df = pd.DataFrame.from_dict(parsed, orient='index')
 df = df[['time', 'author', 'occupation', 'text']]
 #sort comments by the date, starting with the first comments
 df = df.sort_values(by='time')
+
+print 'Cleaning up text...'
+def strip_occ(row):
+    '''Remove the occupation from the text of the comment. Also remove newlines.'''
+    occ = unicode(row['occupation'])
+    txt = row['text'].replace('\n', ' ').replace(occ+'. ', '', 1)
+    return txt
+
+def clean(s):
+    '''Clean up text for ease of processing'''
+    return unicode(s).lower().strip().replace('\n', ' ')
+
+df['text'] = df.apply(strip_occ, axis=1)
+df['author'] = df['author'].apply(clean)
+df['occupation'] = df['occupation'].apply(clean)
 
 print 'Saving parsed comment data...'
 df.to_csv('parsed.tsv', sep='\t', encoding='utf-8')
