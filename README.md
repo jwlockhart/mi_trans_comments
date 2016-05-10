@@ -9,6 +9,7 @@ This code was written collaboratively during the University of Michigan [2016 IC
 
 **Implemented functionality:**
 - Scrape and parse comments
+- Graph comment frequency over time
 
 **Packages used:**
 - BeautifulSoup
