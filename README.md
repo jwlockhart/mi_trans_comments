@@ -4,8 +4,8 @@ This code was written collaboratively during the University of Michigan [2016 IC
 
 **About the data:**
 - 11,228 comments from the public between March 16 and May 9, 2016
--- Total words: 1,498,989
--- Average comment length: 133.5 words
+    - Total words: 1,498,989
+    - Average comment length: 133.5 words
 
 **Implemented functionality:**
 - Scrape and parse comments
