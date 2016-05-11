@@ -19,5 +19,10 @@ This code was written collaboratively during the University of Michigan [2016 IC
 - pandas
 - nltk
 
-**Collaborators (incomplete):**
+**Group members:**
+- Theresa Choe
+- Erin Lane
 - Jeff Lockhart
+- Stephanie Miller
+- Dave Ogden
+- Emily Vargas
