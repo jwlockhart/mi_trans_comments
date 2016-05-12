@@ -64,5 +64,6 @@ target/
 #Ipython Notebook
 .ipynb_checkpoints
 
-#Figures
+#Figures and data
 figures/
+data/
