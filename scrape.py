@@ -8,7 +8,7 @@ import datetime
 import pandas as pd
 
 #number of pages of comments
-pages = 234
+pages = 236
 
 #the base url for all pages of comments
 url = 'http://everyvoicecountsmi.org/136/public-comment-on-the-state-board-of-education-draft-statement-and-guidance-on-safe-and-supportive-learning-environments-for-lesbian-gay-bisexual-transgender-and-questioning-lgbtq-students/comment-page-'
@@ -39,7 +39,7 @@ print 'Completed 100%'
 raw = '\n'.join(data)
 
 print 'Saving the raw html...'
-with open('raw.html', 'w') as fi:
+with open('data/raw.html', 'w') as fi:
     fi.write(raw)
     
 print 'Parsing the comments...'
