@@ -1,5 +1,5 @@
 # Script for calculating word counts in comment data
-# v1.0
+# v1.1
 
 import nltk
 import pandas as pd
@@ -68,6 +68,10 @@ def test_matches(text, words):
             return 1
     return 0
 
+def wc(txt):
+    '''word count'''
+    return len(nltk.tokenize.word_tokenize(txt))
+
 print 'figuring out most common author words...'
 author = get_freqs('\n'.join(data.author.values))
 author.to_csv('data/author_word_frequencies.tsv', sep='\t', encoding='utf-8')
@@ -122,6 +126,18 @@ daily_txt_abs.to_csv('data/daily_text_count.tsv', sep='\t', encoding='utf-8')
 print 'Calculating ratio of posts with a topic per day...'
 daily_txt_per = txts.groupby(pd.TimeGrouper(freq='D')).mean()
 daily_txt_per.to_csv('data/daily_text_percent.tsv', sep='\t', encoding='utf-8')
+
+print 'Doing word counts...'
+summary = data.copy()
+summary['wc'] = summary.text.apply(wc)
+summary = summary[['time', 'wc']]
+summary.to_csv('data/word_counts.tsv', sep='\t', encoding='utf-8')
+summary = summary.set_index('time')
+
+print 'Merging comment annotations...'
+together = occs.merge(txts, left_index=True, right_index=True)
+together = together.merge(summary, left_index=True, right_index=True)
+together.to_csv('data/annotated_comments.tsv', sep='\t', encoding='utf-8')
 
 print 'Done!'
 
