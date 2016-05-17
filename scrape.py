@@ -8,7 +8,7 @@ import datetime
 import pandas as pd
 
 #number of pages of comments
-pages = 238
+pages = 240
 
 #the base url for all pages of comments
 url = 'http://everyvoicecountsmi.org/136/public-comment-on-the-state-board-of-education-draft-statement-and-guidance-on-safe-and-supportive-learning-environments-for-lesbian-gay-bisexual-transgender-and-questioning-lgbtq-students/comment-page-'

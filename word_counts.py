@@ -89,6 +89,7 @@ comment.to_csv('data/comment_word_frequencies.tsv', sep='\t', encoding='utf-8')
 print 'Categorizing poster roles...'
 occs = data.copy()
 occs = occs[['time', 'occupation']]
+occs['cid'] = occs.index
 occs = occs.set_index('time')
 occs['parent'] = occs.occupation.apply(
     count_matches, words=['parent', 'mother', 'father', 'mom', 'dad', 'grandp', 'grandm'])
@@ -108,6 +109,7 @@ daily_roles_per.to_csv('data/daily_roles_percent.tsv', sep='\t', encoding='utf-8
 print 'Categorizing comment text roles...'
 txts = data.copy()
 txts = txts[['time','text']]
+txts['cid'] = txts.index
 txts = txts.set_index('time')
 txts['bathroom'] = txts.text.apply(test_matches, words=['bathroom', 'locker', 'shower', 'assault'])
 txts['rights'] = txts.text.apply(test_matches, words=['rights'])
@@ -131,12 +133,13 @@ print 'Doing word counts...'
 summary = data.copy()
 summary['wc'] = summary.text.apply(wc)
 summary = summary[['time', 'wc']]
+summary['cid'] = summary.index
 summary.to_csv('data/word_counts.tsv', sep='\t', encoding='utf-8')
-summary = summary.set_index('time')
+#summary = summary.set_index('time')
 
 print 'Merging comment annotations...'
-together = occs.merge(txts, left_index=True, right_index=True)
-together = together.merge(summary, left_index=True, right_index=True)
+together = occs.merge(txts, left_on='cid', right_on='cid')
+together = together.merge(summary, left_on='cid', right_on='cid')
 together.to_csv('data/annotated_comments.tsv', sep='\t', encoding='utf-8')
 
 print 'Done!'
